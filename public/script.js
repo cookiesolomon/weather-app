@@ -79,8 +79,10 @@ $('.display-weather').on('click', '.leave-comment', function () {
 
 
 $('.display-weather').on('click', '.trash', function () {
-    weather.cityInfo.splice(0, 1);
-    $(this).closest('.list').remove();
+   var index = $(this).closest('.list').index();
+   console.log(index);
+   weather.cityInfo.splice(index, 1);
+   $(this).closest('.list').remove();
 
 });
 
