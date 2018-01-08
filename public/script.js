@@ -35,7 +35,8 @@ var fetch = function () {
     });
 };
 
-var weather = { cityInfo: [] };
+var idNum = 0;
+var weather = [];
 function renderWeather(data) {
     $('.display-weather').empty();
 
@@ -49,13 +50,15 @@ function renderWeather(data) {
         tempFar: data.current.temp_f ? data.current.temp_f : "info unavailable",
         time: data.location.localtime ? data.location.localtime : "info unavailable",
         comments: []
+    };
+
+    weather.push(toDisplay);
+    for(var i = 0; i < weather.length; i++){
+        var newHTML = template(weather[i]);
+        // append our new html to the page
+        $('.display-weather').append(newHTML);
     }
-
-    weather.cityInfo.push(toDisplay);
-
-    var newHTML = template(weather);
-    // append our new html to the page
-    $('.display-weather').append(newHTML);
+  
     $('.city-title').append('<button class="trash"><i class="fa fa-trash"></i></button>');
 
     saveToLocalStorage();
@@ -66,11 +69,11 @@ function renderWeather(data) {
 
 $('.get-weather').on('click', fetch);
 
-
 $('.display-weather').on('click', '.leave-comment', function () {
-    $(this).closest('.display-weather').find('.show-comments').append($('.comment-input').val() + '<br>');
-    for(var i = 0; i < weather.cityInfo.length; i++){
-    weather.cityInfo[i].comments.push($('.comment-input').val());
+    var comText = $('.comment-input').val();
+    $(this).closest('.display-weather').find('.show-comments').append(comText + '<br>');
+    for(var i = 0; i < weather.length; i++){
+    weather[i].comments.push({text: comText , id: idNum++});
     saveToLocalStorage();
     }
     $('.comment-input').val("");
@@ -81,7 +84,7 @@ $('.display-weather').on('click', '.leave-comment', function () {
 $('.display-weather').on('click', '.trash', function () {
    var index = $(this).closest('.list').index();
    console.log(index);
-   weather.cityInfo.splice(index, 1);
+   weather.splice(index, 1);
    $(this).closest('.list').remove();
 
 });
